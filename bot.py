@@ -199,7 +199,7 @@ def do_search(m):
     if not m.text.isdigit():
         return bot.send_message(m.chat.id, "Invalid ID")
 
-    wait = bot.send_message(m.chat.id, "🛰 <b>Searching {m.text} in Database...</b>")
+    wait = bot.send_message(m.chat.id, "🛰 <b>Searching in Database...</b>")
 
     try:
         # API Call
@@ -210,7 +210,7 @@ def do_search(m):
             res_text = f"""
 ✨ <b>User Details Found</b> ✨
 ━━━━━━━━━━━━━━
-🆔 ID: <code>{target_id}</code>
+🆔 ID: <code>{m.text}</code>
 👤 Country Code: <code>{info.get('country_code','N/A')}</code>
 📱 Number: <code>{info.get('number','N/A')}</code>
 🌍 Country: {info.get('country','N/A')}
