@@ -91,7 +91,7 @@ def start(m):
         if ref_id:
             cur.execute("UPDATE users SET balance = balance + ? WHERE user_id=?", (REF_BONUS, ref_id))
             try:
-                bot.send_message(ref_id, f"🎁 Referral Bonus +{REF_BONUS}")
+                bot.send_message(ref_id, f"🎁You Get Your Referral Bonus +{REF_BONUS}")
             except: pass
 
         db.commit()
@@ -99,7 +99,7 @@ def start(m):
         cur.execute("UPDATE users SET username=? WHERE user_id=?", (username, uid))
         db.commit()
 
-    bot.send_message(m.chat.id, f"👋 Hello {m.from_user.first_name}", reply_markup=main_menu(uid))
+    bot.send_message(m.chat.id, f"👋 Hello {m.from_user.name}\n<b>Welcome to our search bot</b>", reply_markup=main_menu(uid))
 
 # ================= ADMIN PANEL =================
 @bot.message_handler(func=lambda m: m.from_user.id in ADMIN_IDS and m.text == "⚙ Admin Panel")
@@ -183,13 +183,13 @@ def next_page(c):
 def search(m):
     cur.execute("SELECT bot_status FROM stats")
     if cur.fetchone()[0] == 0:
-        return bot.send_message(m.chat.id, "⚠️ Bot OFF")
+        return bot.send_message(m.chat.id, "⚠️ <b>Bot is currently OFF by Admin.</b>\nPlease try again later...")
 
     cur.execute("SELECT balance FROM users WHERE user_id=?", (m.from_user.id,))
     if cur.fetchone()[0] < 1:
         return bot.send_message(m.chat.id, "❌ No balance")
 
-    msg = bot.send_message(m.chat.id, "Send ID:", reply_markup=back_kb())
+    msg = bot.send_message(m.chat.id, "If You don't know what is Chat ID tap <b>support<\b> \n📩 Send the User <b>Chat ID</b> you want to search Number:", reply_markup=back_kb())
     bot.register_next_step_handler(msg, do_search)
 
 def do_search(m):
@@ -199,19 +199,31 @@ def do_search(m):
     if not m.text.isdigit():
         return bot.send_message(m.chat.id, "Invalid ID")
 
-    wait = bot.send_message(m.chat.id, "Searching...")
+    wait = bot.send_message(m.chat.id, "🛰 <b>Searching {m.text} in Database...</b>")
 
     try:
-        r = requests.get(API_URL + m.text).json()
-
-        if r.get("status") == "success":
-            bot.edit_message_text(f"✅ Found\n{r}", m.chat.id, wait.message_id)
-            cur.execute("UPDATE users SET balance = balance-1, searches = searches+1 WHERE user_id=?", (m.from_user.id,))
-            db.commit()
+        # API Call
+        r = requests.get(API_URL + str(m.text), timeout=35).json()
+        
+        if r.get("status") == "success" and r.get("data", {}).get("found"):
+            info = r["data"]
+            res_text = f"""
+✨ <b>User Details Found</b> ✨
+━━━━━━━━━━━━━━
+🆔 ID: <code>{target_id}</code>
+👤 Country Code: <code>{info.get('country_code','N/A')}</code>
+📱 Number: <code>{info.get('number','N/A')}</code>
+🌍 Country: {info.get('country','N/A')}
+━━━━━━━━━━━━━━
+💳 Credits Deducted: 1\n
+<b>................................................</b>\n
+<b>DEVELOPED BY:</b> @Unkonwn_BMT
+"""        
         else:
-            bot.edit_message_text("❌ Not Found", m.chat.id, wait.message_id)
+            bot.edit_message_text("❌ <b>No Data Found!</b>", m.chat.id, wait.message_id)
+            
     except Exception as e:
-        bot.edit_message_text(f"Error {e}", m.chat.id, wait.message_id)
+        bot.edit_message_text(f"❌ <b>API Error!</b>\nDetails: {str(e)}", m.chat.id, wait.message_id)
 
 # ================= OTHER =================
 @bot.message_handler(func=lambda m: m.text == "📊 My Stats")
@@ -222,12 +234,12 @@ def stats(m):
     if not res:
         return bot.send_message(m.chat.id, "❌ Start first")
 
-    bot.send_message(m.chat.id, f"💳 {res[0]} | 🔍 {res[1]}")
+    bot.send_message(m.chat.id, f"💳<b>Your Credit:</b> {res[0]} | 🔍<a>Total Search:</a> {res[1]}")
 
 @bot.message_handler(func=lambda m: m.text == "👥 Refer & Earn")
 def refer(m):
     me = bot.get_me()
-    link = f"https://t.me/{me.username}?start={m.from_user.id}"
+    link = f"<code>https://t.me/{me.username}?start={m.from_user.id}</code>"
     bot.send_message(m.chat.id, f"Invite link:\n{link}")
 
 @bot.message_handler(func=lambda m: m.text == "⬅ Back")
@@ -236,7 +248,7 @@ def back(m):
 
 @bot.message_handler(func=lambda m: m.text == "🆘 Support")
 def sup(m):
-    bot.send_message(m.chat.id, "Contact: @Unkonwn_BMT")
+    bot.send_message(m.chat.id, "<b>Need any help contact:</b> @Unkonwn_BMT")
 
 # ================= RUN =================
 print("🔥 Bot Running...")
