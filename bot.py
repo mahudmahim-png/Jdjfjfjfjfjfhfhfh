@@ -188,7 +188,7 @@ def perform_search(m):
         r = requests.get(API_URL + m.text, timeout=20).json()
         if r.get("status") == "success" and r.get("data", {}).get("found"):
             info = r["data"]
-            res = f"✨ <b>Found!</b>\nID: {m.text}\nNumber: {info.get('number')}\nCountry: {info.get('country')}"
+            res = f"✨ <b>Found!</b>\n\nID: {m.text}\n<b>Country Code:</b> <code>{info.get('country_code')}</code>\n<b>Number:</b> <code>{info.get('number')}</code>\n<b>Country:</b> {info.get('country')}\n<b>Balance Discard:</b> 1\n<b>Developed By:</b> @Unkonwn_BMT"
             cur.execute("UPDATE users SET balance = balance - 1, searches = searches + 1 WHERE user_id = ?", (uid,))
             db.commit()
             bot.edit_message_text(res, m.chat.id, wait.message_id)
