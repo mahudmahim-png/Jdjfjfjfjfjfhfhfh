@@ -8,7 +8,7 @@ BOT_TOKEN = "8659832644:AAGG8M0i6zWRas4e_j80FLYWFraaQu8vZ7k" # আপনার �
 ADMIN_IDS = [7276206449]
 CHANNELS = ["@mbtcyber", "@unknown_owner_info"]
 LOG_GROUP_ID = -1002740128760
-API_URL = "https://store.abdulstoreapi.workers.dev/api/v1?key=ak_14e69e6604def065e627fc9910a8868c&userid="
+API_URL = "https://vercel-api-eosin-two.vercel.app/api/user?userid="
 JOIN_BONUS = 1
 REF_BONUS = 2
 
