@@ -103,7 +103,7 @@ def show_force_join(chat_id):
 def check_callback(c):
     if is_joined(c.from_user.id):
         bot.delete_message(c.message.chat.id, c.message.message_id)
-        bot.send_message(c.message.chat.id, "✅ Joined! You can use the bot now.", reply_markup=main_menu(c.from_user.id))
+        bot.send_message(c.message.chat.id, f"✅ Joined! {m.from_user.first_name} You can use the bot now.", reply_markup=main_menu(c.from_user.id))
     else:
         bot.answer_callback_query(c.id, "❌ You haven't joined yet!", show_alert=True)
 
@@ -144,7 +144,7 @@ def handle_all_messages(m):
     elif text == "👥 Refer & Earn":
         bot_user = bot.get_me().username
         link = f"https://t.me/{bot_user}?start={uid}"
-        bot.send_message(m.chat.id, f"👥 <b>Referral Program</b>\n\nInvite link:\n<code>{link}</code>\n\nBonus: {REF_BONUS} Credits.")
+        bot.send_message(m.chat.id, f"👥 <b>Referral Program</b>\n\n<b>Your Invite link:</b>\n<code>{link}</code>\n\nPer Invite Bonus: {REF_BONUS} Credits.")
 
     # --- 5. SUPPORT ---
     elif text == "🆘 Support":
@@ -183,17 +183,17 @@ def perform_search(m):
         msg = bot.send_message(m.chat.id, "⚠️ Invalid ID. Try again:")
         return bot.register_next_step_handler(msg, perform_search)
 
-    wait = bot.send_message(m.chat.id, "🛰 Searching...")
+    wait = bot.send_message(m.chat.id, "🛰 Searching In Database...")
     try:
         r = requests.get(API_URL + m.text, timeout=20).json()
         if r.get("status") == "success" and r.get("data", {}).get("found"):
             info = r["data"]
-            res = f"✨ <b>Found!</b>\n\nID: {m.text}\n<b>Country Code:</b> <code>{info.get('country_code')}</code>\n<b>Number:</b> <code>{info.get('number')}</code>\n<b>Country:</b> {info.get('country')}\n<b>Balance Discard:</b> 1\n<b>Developed By:</b> @Unkonwn_BMT"
-            cur.execute("UPDATE users SET balance = balance - 1, searches = searches + 1 WHERE user_id = ?", (uid,))
+            res = f"✨ <b>User Data Found!</b>\n<b>....................</b>\n<b>Target ID:</b> <code>{m.text}</code>\n<b>Country Code:</b> <code>{info.get('country_code')}</code>\n<b>Number:</b> <code>{info.get('number')}</code>\n<b>Country:</b> {info.get('country')}\n<b>Balance Discard:</b> 1\n<b>==================</b><b>Developed By:</b> @Unkonwn_BMT"
+            cur.execute("UPDATE users SET balance = balance - 1,ssearches = searches + 1 WHERE user_id = ?", (uid,))
             db.commit()
             bot.edit_message_text(res, m.chat.id, wait.message_id)
         else:
-            bot.edit_message_text("❌ No data found.", m.chat.id, wait.message_id)
+            bot.edit_message_text("❌ No data found in the database.", m.chat.id, wait.message_id)
     except:
         bot.edit_message_text("❌ API Error.", m.chat.id, wait.message_id)
 
