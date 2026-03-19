@@ -179,7 +179,7 @@ def perform_search(m):
     uid = m.from_user.id
     if m.text == "⬅ Back": return handle_all_messages(m)
     
-    if not m.text.isdigit():
+    if not m.text.isdigit() or not (9 <= len(m.text) <= 14):
         msg = bot.send_message(m.chat.id, "⚠️ Invalid ID. Try again:")
         return bot.register_next_step_handler(msg, perform_search)
 
