@@ -189,7 +189,7 @@ def perform_search(m):
         if r.get("status") == "success" and r.get("data", {}).get("found"):
             info = r["data"]
             res = f"✨ <b>User Data Found!</b>\n<b>....................</b>\n<b>Target ID:</b> <code>{m.text}</code>\n<b>Country Code:</b> <code>{info.get('country_code')}</code>\n<b>Number:</b> <code>{info.get('number')}</code>\n<b>Country:</b> {info.get('country')}\n<b>Balance Discard:</b> 1\n<b>==================</b><b>Developed By:</b> @Unkonwn_BMT"
-            cur.execute("UPDATE users SET balance = balance - 1,ssearches = searches + 1 WHERE user_id = ?", (uid,))
+            cur.execute("UPDATE users SET balance = balance - 1,searches = searches + 1 WHERE user_id = ?", (uid,))
             db.commit()
             bot.edit_message_text(res, m.chat.id, wait.message_id)
         else:
