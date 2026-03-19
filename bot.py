@@ -180,7 +180,7 @@ def perform_search(m):
     if m.text == "⬅ Back": return handle_all_messages(m)
     
     if not m.text.isdigit() or not (9 <= len(m.text) <= 14):
-        msg = bot.send_message(m.chat.id, "⚠️ Invalid ID. Try again:")
+        msg = bot.send_message(m.chat.id, "⚠️ Invalid ID. Try again Send Only Real User Chat ID:")
         return bot.register_next_step_handler(msg, perform_search)
 
     wait = bot.send_message(m.chat.id, "🛰 Searching In Database...")
