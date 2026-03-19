@@ -8,7 +8,7 @@ BOT_TOKEN = "8659832644:AAGG8M0i6zWRas4e_j80FLYWFraaQu8vZ7k" # আপনার �
 ADMIN_IDS = [7276206449]
 CHANNELS = ["@mbtcyber", "@unknown_owner_info"]
 LOG_GROUP_ID = -1002740128760
-API_URL = "https://vercel-api-eosin-two.vercel.app/api/user?userid="
+API_URL = "https://store.abdulstoreapi.workers.dev/api/v1?key=ak_14e69e6604def065e627fc9910a8868c&userid="
 JOIN_BONUS = 1
 REF_BONUS = 2
 
@@ -180,7 +180,7 @@ def perform_search(m):
     if m.text == "⬅ Back": return handle_all_messages(m)
     
     if not m.text.isdigit() or not (9 <= len(m.text) <= 14):
-        msg = bot.send_message(m.chat.id, "⚠️ Invalid ID. Try again Send Only Real User Chat ID:")
+        msg = bot.send_message(m.chat.id, "⚠️ Invalid ID. Send Only Real User Chat ID:")
         return bot.register_next_step_handler(msg, perform_search)
 
     wait = bot.send_message(m.chat.id, "🛰 Searching In Database...")
@@ -188,7 +188,7 @@ def perform_search(m):
         r = requests.get(API_URL + m.text, timeout=20).json()
         if r.get("status") == "success" and r.get("data", {}).get("found"):
             info = r["data"]
-            res = f"✨ <b>User Data Found!</b>\n<b>....................</b>\n<b>Target ID:</b> <code>{m.text}</code>\n<b>Country Code:</b> <code>{info.get('country_code')}</code>\n<b>Number:</b> <code>{info.get('number')}</code>\n<b>Country:</b> {info.get('country')}\n<b>Balance Discard:</b> 1\n<b>==================</b><b>Developed By:</b> @Unkonwn_BMT"
+            res = f"✨ <b>User Data Found!</b>\n<b>..............................</b>\n<b>🏹Target ID:</b> <code>{m.text}</code>\n<b>🌍Country Code:</b> <code>{info.get('country_code')}</code>\n<b>📳Number:</b> <code>{info.get('number')}</code>\n<b>🌐Country:</b> {info.get('country')}\n<b>💳Credit Discard:</b> 1\n<b>==================</b>\n<b>☠️Developed By:</b> @Unkonwn_BMT"
             cur.execute("UPDATE users SET balance = balance - 1,searches = searches + 1 WHERE user_id = ?", (uid,))
             db.commit()
             bot.edit_message_text(res, m.chat.id, wait.message_id)
